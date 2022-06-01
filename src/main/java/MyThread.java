@@ -1,13 +1,8 @@
 public class MyThread implements Runnable{
 
-    protected Thread thread;
-
-    public MyThread(String name) {
-        thread = new Thread(name);
-    }
-
     @Override
     public void run() {
+        Thread thread = Thread.currentThread();
         try {
             while(!thread.isInterrupted()) {
                 thread.sleep(2500);

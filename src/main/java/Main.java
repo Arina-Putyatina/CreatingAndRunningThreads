@@ -1,25 +1,31 @@
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.concurrent.*;
+
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
 
-        ThreadGroup mainGroup = new ThreadGroup("main");
-        final Thread thread1 = new Thread(mainGroup, new MyThread("1"));
-        final Thread thread2 = new Thread(mainGroup, new MyThread("2"));
-        final Thread thread3 = new Thread(mainGroup, new MyThread("3"));
-        final Thread thread4 = new Thread(mainGroup, new MyThread("4"));
+        Collection<MyThread> tasks = new ArrayList<>();
+        tasks.add(new MyThread());
+        tasks.add(new MyThread());
+        tasks.add(new MyThread());
+        tasks.add(new MyThread());
+        final ExecutorService threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        Collection<Future<Integer>> results = threadPool.invokeAll(tasks);
+        Integer results2 = threadPool.invokeAny(tasks);
 
+        for (Future<Integer> result : results) {
+            System.out.println("Выведено сообщений " + result.get());
+        }
+        System.out.println("результат случайной задачи " + results2);
         long start = System.currentTimeMillis();
         long end = start + 15 * 1000;
-
-        thread1.start();
-        thread2.start();
-        thread3.start();
-        thread4.start();
 
         while (System.currentTimeMillis() < end) {
         }
 
-        mainGroup.interrupt();
+        threadPool.shutdown();
 
     }
 }

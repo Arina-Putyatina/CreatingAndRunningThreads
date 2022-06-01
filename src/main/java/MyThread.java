@@ -1,20 +1,26 @@
-public class MyThread extends Thread implements Runnable{
+import java.util.Random;
+import java.util.concurrent.Callable;
 
-    public MyThread(String name) {
-        super(name);
-    }
+public class MyThread implements Callable<Integer> {
 
     @Override
-    public void run() {
+    public Integer call() throws Exception {
+        Random rand = new Random();
+        int max = 7;
+        int min = 3;
+        int messagesCount = rand.nextInt((max - min) + 1) + min;
+        Thread thread = Thread.currentThread();
         try {
-            while(!isInterrupted()) {
+            for (int i = 0; i <messagesCount; i++) {
+                if (thread.isInterrupted()) break;
                 Thread.sleep(2500);
-                System.out.printf("Я поток %s. Всем привет!\n", getName());
+                System.out.printf("Я поток %s. Сообщение №%s\n", thread.getName(), i);
             }
         } catch (InterruptedException err) {
             err.printStackTrace();
-        } finally{
-            System.out.printf("%s завершен\n", getName());
+        } finally {
+            System.out.printf("%s завершен\n", thread.getName());
         }
+        return messagesCount;
     }
 }
